@@ -43,12 +43,12 @@ public_users.get('/isbn/:isbn',async function (req, res) {
 
 const getAllBooksByAuthor = async (author) => {
   let b = {};
-  for (const i of books){
-    let book = books[i];
-    if (book["author"]===author){
-        b[i] = book;
+  Object.keys(books).forEach(key => {
+    const book = books[key];
+    if (book["author"]==author){
+      b[key] = book;
     }
-  }
+  })
   return b;
 }
 
@@ -59,28 +59,35 @@ public_users.get('/author/:author', async function (req, res) {
 });
 
 const getBookByTitle = async (title) => {
-  for (const i of books){
-    let book = books[i];
+  let foundBook = null;
+  Object.keys(books).forEach(key => {
+    const book = books[key];
     if (book["title"]===title){
-        return book;
+      foundBook = book;
+      return;
     }
-  }
-  return null;
+  })
+  return foundBook;
 }
 // Get all books based on title
 public_users.get('/title/:title',async function (req, res) {
   //Write your code here
-  const book = getBookByTitle(req.params.title);
+  const book = await getBookByTitle(req.params.title);
   if (book)
-    return res.status(200).json(message: "Book found");
-  return res.status(300).json(message: "Not found");
+    return res.status(200).json({message: "Book found", book});
+  return res.status(300).json({message: "Not found"});
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
-  return res.status(300).json(books[isbn][reviews]);
+  const reviews = books[isbn]["reviews"];
+  if (reviews.length > 0){
+    return res.status(200).json({message: "Reviews found", reviews});
+  }
+
+  return res.status(300).json({message: "This book has no reviews"});
 });
 
 module.exports.general = public_users;

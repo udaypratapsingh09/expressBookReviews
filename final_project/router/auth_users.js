@@ -58,17 +58,17 @@ regd_users.post("/login", (req,res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
   const review = req.body.review;
-  const book = books[isbn];
+  const book = books[req.params.isbn];
   const username = req.session.authorization.username;
   if (book){
     book["reviews"][username] = review;
-    return res.status(300).json({message: "Review added/changed"});
+    return res.status(200).json({message: "Review added/changed", reviews: book["reviews"]});
   }
   return res.status(300).json({message: "Failed to change review"});
 });
 
 regd_users.delete("/auth/review/:isbn", (req, res) => {
-  const book = books[isbn];
+  const book = books[req.params.isbn];
   const username = req.session.authorization.username;
   
   if (book && book["reviews"][username]){
