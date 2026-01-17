@@ -29,14 +29,19 @@ public_users.post("/register", (req,res) => {
 public_users.get('/',async function (req, res) {
   //Write your code here
   const foundBooks = await books;
-  return res.status(300).json(foundBooks);
+  console.log(foundBooks);
+  if (foundBooks)
+    return res.status(200).json({message: "Books found", foundBooks});
+  return res.status(300).json({message: "No books found"});
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',async function (req, res) {
   //Write your code here
   const foundBook = await books[req.params.isbn]
-  return res.status(300).json(foundBook);
+  if (foundBook)
+    return res.status(200).json({message: "Book found", foundBook});
+  return res.status(300).json({message: "Book with this isbn does not exist"});
  });
   
 // Get book details based on author
@@ -55,7 +60,10 @@ const getAllBooksByAuthor = async (author) => {
 public_users.get('/author/:author', async function (req, res) {
   //Write your code here
   const b = await getAllBooksByAuthor(req.params.author);
-  return res.status(300).json(b);
+  if (b)
+    return res.status(200).json({message: "Books found", books: b});
+
+  return res.status(300).json({message: "No books found"});
 });
 
 const getBookByTitle = async (title) => {
